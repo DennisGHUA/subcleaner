@@ -133,6 +133,12 @@ def clean_text(subtitle: Subtitle) -> None:
         # Clean up extra whitespace
         block.content = block.content.strip()
         
+        # If text cleaning left the block empty, mark it for deletion
+        if not block.content and block.content != original_content:
+            subtitle.ad(block)
+            block.hints.append("empty_after_text_cleaning")
+            continue
+        
         # Update clean_content for matching algorithms
         if block.content != original_content:
             diff = _build_unified_diff(original_content, block.content)
